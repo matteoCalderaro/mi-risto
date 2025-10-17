@@ -3,30 +3,44 @@ let selectedItems = [];
 
 // Fetch all items from JSON file
 async function fetchAllItems() {
-  try {
-    const response = await fetch('/json/allitems.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const allItemsSelect = document.querySelector('.all-items-select');
+  
+  if (allItemsSelect.value === '1') {
+    try {
+      const response = await fetch('./json/allitems.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      allItems = await response.json();
+    } catch (error) {
+      console.error('Error fetching allitems.json:', error);
     }
-    allItems = await response.json();
-    updateDualListbox();
-  } catch (error) {
-    console.error('Error fetching allitems.json:', error);
+  } else {
+    allItems = [];
   }
+  
+  updateDualListbox();
 }
 
 // Fetch selected items from JSON file
 async function fetchSelectedItems() {
-  try {
-    const response = await fetch('/json/selecteditems.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const selectedItemsSelect = document.querySelector('.selected-items-select');
+  
+  if (selectedItemsSelect.value === '1') {
+    try {
+      const response = await fetch('./json/selecteditems.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      selectedItems = await response.json();
+    } catch (error) {
+      console.error('Error fetching selecteditems.json:', error);
     }
-    selectedItems = await response.json();
-    updateDualListbox();
-  } catch (error) {
-    console.error('Error fetching selecteditems.json:', error);
+  } else {
+    selectedItems = [];
   }
+  
+  updateDualListbox();
 }
 
 function mergeItems(allItems, selectedItems) {

@@ -21,33 +21,33 @@
     <body>
         
         <div class="outer-container">
-            <div class="fw-bold">SELEZIONI CORRENTI</div>
-            <div>Prodotto: Oio di oliva</div>
-            <div class="mb-5">CCIA: provincia di Bari</div>
+            <div style="text-decoration: underline;">FUNZIONA SOLO PER LE SEGUENTI OPZIONI (chiamate attive) </div>
+            <div>CCIA: Bari</div>
+            <div class="mb-5">Prodotto: Olio di oliva</div>
             
-            <div class="mb-5 d-flex justify-content-between">
-                <div>
-                    <label>Choose a pet:</label>
-                    <select class="all-items-select">
-                        <option value="">--Please choose an option--</option>
-                        <option value="dog">Dog</option>
-                        <option value="cat">Cat</option>
-                        <option value="hamster">Hamster</option>
-                        <option value="parrot">Parrot</option>
-                        <option value="spider">Spider</option>
-                        <option value="goldfish">Goldfish</option>
+            <div class="mb-5 d-flex justify-content-between gap-3">
+                <div style="width: 300px;">
+                    <label for="cciaSelect">CCIA</label>
+                    <select id="cciaSelect" class="all-items-select form-select form-select-sm">
+                        <option value="">Seleziona una CCIA</option>
+                        <option value="1">Bari</option>
+                        <option value="2">Lecce</option>
+                        <option value="3">Foggia</option>
+                        <option value="4">Taranto</option>
+                        <option value="5">Brindisi</option>
+                        <option value="6">Barletta</option>
                     </select>
                 </div>
-                <div>
-                    <label>Choose a pet:</label>
-                    <select class="selected-items-select">
-                        <option value="">--Please choose an option--</option>
-                        <option value="dog">Dog</option>
-                        <option value="cat">Cat</option>
-                        <option value="hamster">Hamster</option>
-                        <option value="parrot">Parrot</option>
-                        <option value="spider">Spider</option>
-                        <option value="goldfish">Goldfish</option>
+                <div  style="width: 300px;">
+                    <label for="prodottoSelect">Denominazione prodotto</label>
+                    <select id="prodottoSelect" class="selected-items-select form-select form-select-sm">
+                        <option value="">Seleziona un prodotto</option>
+                        <option value="1">Olio di oliva</option>
+                        <option value="2">Lenticchie secche</option>
+                        <option value="3">Cioccolato fondente extra</option>
+                        <option value="4">Birra artigianale chiara</option>
+                        <option value="5">Capperi sotto sale</option>
+                        <option value="6">Pistacchi sgusciati</option>
                     </select>
                 </div>
             </div>

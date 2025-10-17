@@ -1,7 +1,16 @@
 [
-    { "id": "1", "name": "Apple" },
-    { "id": "2", "name": "Banana" },
-    { "id": "3", "name": "Cherry" },
-    { "id": "4", "name": "Date" },
-    { "id": "5", "name": "Elderberry" }
+    { "id": 1, "name": "Olio extra vergine di oliva"},
+    { "id": 2, "name": "Olio di oliva vergine" },
+    { "id": 3, "name": "Olio di oliva"},
+    { "id": 4, "name": "Olio extra vergine di oliva D.O.P. Terra di Bari"},
+    { "id": 5, "name": "Vino rosso I.G.P. Salento"},
+    { "id": 6, "name": "Pasta secca di semola di grano duro"},
+    { "id": 7, "name": "Formaggio pecorino stagionato"},
+    { "id": 8, "name": "Miele millefiori biologico"},
+    { "id": 9, "name": "Conserve di pomodoro pelato"},
+    { "id": 10, "name": "Salumi e insaccati tipici"},
+    { "id": 11, "name": "Farina di grano tenero tipo '00'"},
+    { "id": 12, "name": "Caffè in grani torrefatto"},
+    { "id": 13, "name": "Biscotti artigianali da forno"},
+    { "id": 14, "name": "Acqua minerale naturale"}
 ]

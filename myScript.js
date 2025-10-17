@@ -1,134 +1,63 @@
 const allAvailableItems = [
-            { id: '1', name: 'Olio extra vergine di oliva', selected: false, locked: false },
-            { id: '2', name: 'Olio di oliva vergine', selected: false, locked: false },
-            { id: '3', name: 'Olio di oliva', selected: false, locked: false },
-            { id: '4', name: 'Olio extra vergine di oliva D.O.P. Terra di Bari', selected: false, locked: false }
-        ];
-        
-        const initiallySelectedItems = [
-            { id: '6', name: 'esitente1', selected: true, locked: true},
-            { id: '7', name: 'esistente2', selected: true, locked: true },
-            { id: '8', name: 'esistente3', selected: true, locked: true },
-        ];
+    { id: '1', name: 'Apple' },
+    { id: '2', name: 'Banana' },
+    { id: '3', name: 'Cherry' },
+    { id: '4', name: 'Date' },
+    { id: '5', name: 'Elderberry' },
+];
 
-        
-        // Concatenate arrays
-        const allItems = [...initiallySelectedItems, ...allAvailableItems ];
-        
-        function populateSelect(data) {
-            const selectElement = document.querySelector('.select1');
-            selectElement.innerHTML = ''; 
-            
-            data.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.id;
-                option.textContent = item.name;
-                
-                // Check if selected property exists and is true
-                if (item.selected) {
-                    option.setAttribute('selected', 'selected');
-                    //option.setAttribute('disabled','disabled');
-                }
 
-                if (item.locked) {
-                    option.setAttribute('data-locked', 'true');
-                }
-                
-                selectElement.appendChild(option);
-            });
+const initiallySelectedIds = ['1', '2']; 
+
+
+function populateSelect(data, selectedIds) {
+    const selectElement = document.querySelector('.select1');
+    selectElement.innerHTML = ''; 
+    
+    const selectedIdSet = new Set(selectedIds);
+    
+    data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.name;
+        
+        if (selectedIdSet.has(item.id)) {
+            option.setAttribute('selected', 'selected');
         }
         
-        
-        
-        /**
-         * Funzione principale di inizializzazione.
-         */
-        function initializeDualListbox() {
-            // 1. Popola il DOM con lo stato di selezione corretto
-            populateSelect(allItems); 
+        selectElement.appendChild(option);
+    });
+}
 
-            // 2. Inizializza la libreria (che ora legge lo stato corretto)
-            // La nuova versione usa 'addEventListener' per gli eventi 'added' e 'removed' 
-            // e i nomi delle proprietà sono cambiati (es. availableTitle -> availableTitle)
-            const dualListboxInstance = new DualListbox('.select1', {
-                availableTitle: 'CCIAA Bari',
-                selectedTitle: 'Milano Ristorazione',
-                addButtonText: '>',
-                removeButtonText: '<',
-                addAllButtonText: '>>',
-                removeAllButtonText: '<<',
-                // ========== NEW CODE ==========
-                sortFunction: (a, b) => {
-                    // Preserve insertion order by comparing order property
-                    return a.order < b.order ? -1 : a.order > b.order ? 1 : 0;
-                }
-                // ==============================
-            });
 
-            
-            // Add locked property to the library's internal options array
-            dualListboxInstance.options.forEach(option => {
-                const sourceItem = allItems.find(item => item.id === option.value);
-                if (sourceItem) {
-                    option.locked = sourceItem.locked;
-                }
-            });
-            
-            // Override changeSelected to prevent moving locked items
-            const originalChangeSelected = dualListboxInstance.changeSelected.bind(dualListboxInstance);
-            dualListboxInstance.changeSelected = function(element) {
-                const option = this.options.find(opt => opt.value === element.dataset.id);
-                if (option && option.locked) {
-                    console.log('This item is locked and cannot be moved');
-                    return;
-                }
-                originalChangeSelected(element);
-            };
-            
+function initializeDualListbox() {
+   
+    populateSelect(allAvailableItems,initiallySelectedIds ); 
+    
+    const dualListboxInstance = new DualListbox('.select1', {
+        availableTitle: 'CCIAA Bari',
+        selectedTitle: 'Milano Ristorazione',
+        addButtonText: '>',
+        removeButtonText: '<',
+        addAllButtonText: '>>',
+        removeAllButtonText: '<<',
+        // ========== NEW CODE ==========
+        sortFunction: (a, b) => {
+            // Preserve insertion order by comparing order property
+            return a.order < b.order ? -1 : a.order > b.order ? 1 : 0;
+        }
+        // ==============================
+    });
     
 
-            // Override actionAllSelected to exclude locked items
-            const originalActionAllSelected = dualListboxInstance.actionAllSelected.bind(dualListboxInstance);
-            dualListboxInstance.actionAllSelected = function(e) {
-                e && e.preventDefault();
-                this.options.forEach(option => {
-                    if (!option.locked) {
-                        option.selected = true;
-                    }
-                });
-                //this.redraw();
-                 this.updateAvailableListbox();
-                this.updateSelectedListbox();
-                this.syncSelect();
-            };
+    dualListboxInstance.addEventListener('added', (e) => {
+        console.log('Added value:', e.addedElement.dataset.id);
+    });
+    
+    dualListboxInstance.addEventListener('removed', (e) => {
+        console.log('Removed value:', e.removedElement.dataset.id);
+    });
+    
+}
 
-            // Override actionAllDeselected to exclude locked items
-            const originalActionAllDeselected = dualListboxInstance.actionAllDeselected.bind(dualListboxInstance);
-            dualListboxInstance.actionAllDeselected = function(e) {
-                e && e.preventDefault();
-                this.options.forEach(option => {
-                    if (!option.locked) {
-                        option.selected = false;
-                    }
-                });
-                //this.redraw();
-                 this.updateAvailableListbox();
-                this.updateSelectedListbox();
-                this.syncSelect();
-            };
-
-
-            // La nuova versione utilizza un event listener sul componente principale per gli eventi
-            // La logica 'addEvent' e 'removeEvent' è stata sostituita da 'addEventListener'
-            dualListboxInstance.addEventListener('added', (e) => {
-                console.log('Added value:', e.addedElement.dataset.id);
-            });
-
-            dualListboxInstance.addEventListener('removed', (e) => {
-                console.log('Removed value:', e.removedElement.dataset.id);
-            });
-
-        }
-
-        // Esegui la logica solo quando il DOM è pronto (garantisce che .select1 esista)
-        document.addEventListener('DOMContentLoaded', initializeDualListbox);
+document.addEventListener('DOMContentLoaded', initializeDualListbox);

@@ -78,6 +78,9 @@
 /*# sourceMappingURL=dual-listbox.css.map */
 
 
+/************
+ MATTEO CSS 
+**************/
 
 .outer-container{
   width: 55%;
@@ -88,4 +91,12 @@
 .dual-listbox__container > div:first-child,
 .dual-listbox__container > div:last-child {
   flex: 1 1 0;
+}
+
+.dual-listbox__title {
+    display: none;
+}
+
+.dual-listbox__search {
+  margin-bottom: 20px;
 }

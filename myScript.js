@@ -1,4 +1,4 @@
-const allAvailableItems = [
+const allItems = [
     { id: '1', name: 'Apple' },
     { id: '2', name: 'Banana' },
     { id: '3', name: 'Cherry' },
@@ -6,22 +6,34 @@ const allAvailableItems = [
     { id: '5', name: 'Elderberry' },
 ];
 
+const selectedItems = [
+    { id: '1', name: 'Apple' }
+];
 
-const initiallySelectedIds = ['1', '2']; 
+function mergeItems(allItems, selectedItems) {
+  return allItems.map(item => { 
+    const selectedItem = selectedItems.find(selected => selected.id === item.id);
+    return {
+      ...item,
+      selected: !!selectedItem
+    };
+  });
+}
+
+const mergedItems = mergeItems(allItems, selectedItems);
 
 
-function populateSelect(data, selectedIds) {
+function populateSelect(data) {
     const selectElement = document.querySelector('.select1');
     selectElement.innerHTML = ''; 
     
-    const selectedIdSet = new Set(selectedIds);
     
     data.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
         option.textContent = item.name;
         
-        if (selectedIdSet.has(item.id)) {
+        if (item.selected) {
             option.setAttribute('selected', 'selected');
         }
         
@@ -32,7 +44,7 @@ function populateSelect(data, selectedIds) {
 
 function initializeDualListbox() {
    
-    populateSelect(allAvailableItems,initiallySelectedIds ); 
+    populateSelect(mergedItems); 
     
     const dualListboxInstance = new DualListbox('.select1', {
         availableTitle: 'CCIAA Bari',
@@ -41,12 +53,6 @@ function initializeDualListbox() {
         removeButtonText: '<',
         addAllButtonText: '>>',
         removeAllButtonText: '<<',
-        // ========== NEW CODE ==========
-        sortFunction: (a, b) => {
-            // Preserve insertion order by comparing order property
-            return a.order < b.order ? -1 : a.order > b.order ? 1 : 0;
-        }
-        // ==============================
     });
     
 

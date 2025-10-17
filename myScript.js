@@ -1,14 +1,33 @@
-const allItems = [
-    { id: '1', name: 'Apple' },
-    { id: '2', name: 'Banana' },
-    { id: '3', name: 'Cherry' },
-    { id: '4', name: 'Date' },
-    { id: '5', name: 'Elderberry' },
-];
+let allItems = [];
+let selectedItems = [];
 
-const selectedItems = [
-    { id: '1', name: 'Apple' }
-];
+// Fetch all items from JSON file
+async function fetchAllItems() {
+  try {
+    const response = await fetch('/json/allitems.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    allItems = await response.json();
+    updateDualListbox();
+  } catch (error) {
+    console.error('Error fetching allitems.json:', error);
+  }
+}
+
+// Fetch selected items from JSON file
+async function fetchSelectedItems() {
+  try {
+    const response = await fetch('/json/selecteditems.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    selectedItems = await response.json();
+    updateDualListbox();
+  } catch (error) {
+    console.error('Error fetching selecteditems.json:', error);
+  }
+}
 
 function mergeItems(allItems, selectedItems) {
   return allItems.map(item => { 
@@ -20,50 +39,79 @@ function mergeItems(allItems, selectedItems) {
   });
 }
 
-const mergedItems = mergeItems(allItems, selectedItems);
-
-
 function populateSelect(data) {
-    const selectElement = document.querySelector('.select1');
-    selectElement.innerHTML = ''; 
+  const selectElement = document.querySelector('.dual-list-select');
+  selectElement.innerHTML = ''; 
+  
+  data.forEach(item => {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = item.name;
     
+    if (item.selected) {
+      option.setAttribute('selected', 'selected');
+    }
     
-    data.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.id;
-        option.textContent = item.name;
-        
-        if (item.selected) {
-            option.setAttribute('selected', 'selected');
-        }
-        
-        selectElement.appendChild(option);
-    });
+    selectElement.appendChild(option);
+  });
 }
 
+function createDualListboxInstance() {
+  const dualListboxInstance = new DualListbox('.dual-list-select', {
+    availableTitle: 'CCIAA Bari',
+    selectedTitle: 'Milano Ristorazione',
+    addButtonText: '>',
+    removeButtonText: '<',
+    addAllButtonText: '>>',
+    removeAllButtonText: '<<',
+  });
+  
+  dualListboxInstance.addEventListener('added', (e) => {
+    console.log('Added value:', e.addedElement.dataset.id);
+  });
+  
+  dualListboxInstance.addEventListener('removed', (e) => {
+    console.log('Removed value:', e.removedElement.dataset.id);
+  });
+  
+  return dualListboxInstance;
+}
+
+function updateDualListbox() {
+  const mergedItems = mergeItems(allItems, selectedItems);
+  populateSelect(mergedItems);
+  
+  // Destroy previous instance if it exists
+  const existingListbox = document.querySelector('.dual-listbox');
+  if (existingListbox) {
+    existingListbox.remove();
+  }
+  
+  createDualListboxInstance();
+}
+
+function initializeEventListeners() {
+  const allItemsSelect = document.querySelector('.all-items-select');
+  const selectedItemsSelect = document.querySelector('.selected-items-select');
+  
+  if (allItemsSelect) {
+    allItemsSelect.addEventListener('change', fetchAllItems);
+  }
+  
+  if (selectedItemsSelect) {
+    selectedItemsSelect.addEventListener('change', fetchSelectedItems);
+  }
+}
 
 function initializeDualListbox() {
-   
-    populateSelect(mergedItems); 
-    
-    const dualListboxInstance = new DualListbox('.select1', {
-        availableTitle: 'CCIAA Bari',
-        selectedTitle: 'Milano Ristorazione',
-        addButtonText: '>',
-        removeButtonText: '<',
-        addAllButtonText: '>>',
-        removeAllButtonText: '<<',
-    });
-    
-
-    dualListboxInstance.addEventListener('added', (e) => {
-        console.log('Added value:', e.addedElement.dataset.id);
-    });
-    
-    dualListboxInstance.addEventListener('removed', (e) => {
-        console.log('Removed value:', e.removedElement.dataset.id);
-    });
-    
+  const mergedItems = mergeItems(allItems, selectedItems);
+  populateSelect(mergedItems);
+  createDualListboxInstance();
 }
 
-document.addEventListener('DOMContentLoaded', initializeDualListbox);
+function initialize() {
+  initializeEventListeners();
+  initializeDualListbox();
+}
+
+document.addEventListener('DOMContentLoaded', initialize);

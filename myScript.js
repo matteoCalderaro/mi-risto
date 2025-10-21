@@ -2,12 +2,28 @@ import { fetchAllItems, fetchSelectedItems, saveItems } from './services.js';
 
 let allItems = [];
 let selectedItems = [];
+const SIMULATED_LATENCY = 1000;
 
 // Cache DOM elements
 const $allItemsSelect = $('#all-items-select');
 const $selectedItemsSelect = $('#selected-items-select');
 const allItemsSelect = document.querySelector('#all-items-select');
 const selectedItemsSelect = document.querySelector('#selected-items-select');
+const spinnerElement = document.querySelector('#loading-overlay-bs');
+
+// --- SPINNER MANAGEMENT ---
+function showSpinner() {
+    if (spinnerElement) {
+        spinnerElement.classList.remove('d-none');
+    }
+}
+
+function hideSpinner() {
+    if (spinnerElement) {
+        spinnerElement.classList.add('d-none');
+    }
+}
+// --------------------------
 
 // Helper function to disable/enable select
 function toggleSelectDisabled(isDisabled) {
@@ -35,7 +51,11 @@ function initializeSelect2() {
     $selectedItemsSelect.on('change', onSelectedItemsSelectChange);
 }
 
-// Handle all items select change
+/////////////////////////////////////////////////
+// SELECTS CHANGE LISTENERS + HTTP REQUESTS
+/////////////////////////////////////////
+
+// ALL-ITEMS SELECT
 async function onAllItemsSelectChange() {
     if (allItemsSelect.value === '') {
         allItems = [];
@@ -56,14 +76,23 @@ async function onAllItemsSelectChange() {
     toggleSelectDisabled(false);
     
     try {
+        showSpinner();
+        
         allItems = await fetchAllItems(allItemsSelect.value);
-        updateDualListbox();
+        
+        // Simulate latency for UI update
+        setTimeout(() => {
+            updateDualListbox();
+            hideSpinner();
+        }, SIMULATED_LATENCY);
+        
     } catch (error) {
         console.error('Error:', error);
+        hideSpinner();
     }
 }
 
-// Handle selected items select change
+// sELECTED-ITEMS SELECT
 async function onSelectedItemsSelectChange() {
     if (selectedItemsSelect.value === '') {
         selectedItems = [];
@@ -73,11 +102,20 @@ async function onSelectedItemsSelectChange() {
     }
     
     try {
+        showSpinner();
+        
         selectedItems = await fetchSelectedItems(selectedItemsSelect.value);
-        updateDualListbox();
-        toggleDualListboxAddButtons(false);
+        
+        // Simulate latency for UI update
+        setTimeout(() => {
+            updateDualListbox();
+            toggleDualListboxAddButtons(false);
+            hideSpinner();
+        }, SIMULATED_LATENCY);
+        
     } catch (error) {
         console.error('Error:', error);
+        hideSpinner();
     }
 }
 
@@ -113,15 +151,6 @@ function createDualListboxInstance() {
         enableDoubleClick: false,
         draggable: false
     });
-
-    // instance.addEventListener('added', (e) => {
-    //     console.log('Added value:', e.addedElement.dataset.id);
-    // });
-
-    // instance.addEventListener('removed', (e) => {
-    //     console.log('Removed value:', e.removedElement.dataset.id);
-    // });
-
     toggleDualListboxAddButtons(selectedItemsSelect.value === '');
 }
 
@@ -178,24 +207,30 @@ function extractItemsFromDualListbox() {
 async function onSaveButtonClick() {
     try {
         const { itemsToSave, selectedItemsToSave } = extractItemsFromDualListbox();
-        console.log(itemsToSave,selectedItemsToSave)
+        
+        showSpinner();
         const result = await saveItems(itemsToSave, selectedItemsToSave);
         
         allItems = result.allItems;
         selectedItems = result.selectedItems;
         
-        updateDualListbox();
+        // Simulate latency for UI update
+        setTimeout(() => {
+            updateDualListbox();
+            
+            alert('Items saved successfully!');
+            hideSpinner();
+        }, SIMULATED_LATENCY);
         
-        alert('Items saved successfully!');
     } catch (error) {
         alert(`Error saving items: ${error.message}`);
+        hideSpinner();
     }
 }
 
 // Attach save button listener
 function attachSaveButtonListener() {
     const saveButton = document.querySelector('.save-items-button');
-    
     if (saveButton) {
         saveButton.addEventListener('click', onSaveButtonClick);
     }

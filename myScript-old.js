@@ -27,7 +27,7 @@ function initializeSelect2() {
         allowClear: true,
         width: '100%'
     });
-
+    
     toggleSelectDisabled(true);
     
     // Listen to Select2 change events
@@ -51,8 +51,10 @@ async function onAllItemsSelectChange() {
     
     selectedItems = [];
     
-    // Clear and enable selected-items-select
+    // Clear and disable selected-items-select
     $selectedItemsSelect.val('').trigger('change');
+    
+    // Enable selected-items-select
     toggleSelectDisabled(false);
     
     try {
@@ -68,14 +70,12 @@ async function onSelectedItemsSelectChange() {
     if (selectedItemsSelect.value === '') {
         selectedItems = [];
         updateDualListbox();
-        toggleDualListboxAddButtons(true);
         return;
     }
     
     try {
         selectedItems = await fetchSelectedItems(selectedItemsSelect.value);
         updateDualListbox();
-        toggleDualListboxAddButtons(false);
     } catch (error) {
         console.error('Error:', error);
     }
@@ -103,33 +103,24 @@ function populateSelect(data) {
 }
 
 function createDualListboxInstance() {
-    const instance = new DualListbox('.dual-list-select', {
+    const dualListboxInstance = new DualListbox('.dual-list-select', {
         availableTitle: 'CCIAA Bari',
         selectedTitle: 'Milano Ristorazione',
         addButtonText: '>',
         removeButtonText: '<',
         addAllButtonText: '>>',
         removeAllButtonText: '<<',
-        enableDoubleClick: false,
-        draggable: false
     });
-
-    // instance.addEventListener('added', (e) => {
-    //     console.log('Added value:', e.addedElement.dataset.id);
-    // });
-
-    // instance.addEventListener('removed', (e) => {
-    //     console.log('Removed value:', e.removedElement.dataset.id);
-    // });
-
-    toggleDualListboxAddButtons(selectedItemsSelect.value === '');
-}
-
-function toggleDualListboxAddButtons(disabled) {
-    let buttons = document.querySelectorAll('.dual-listbox__button')
-    buttons.forEach(button =>{
-       button.disabled = disabled;
-    })
+    
+    dualListboxInstance.addEventListener('added', (e) => {
+        console.log('Added value:', e.addedElement.dataset.id);
+    });
+    
+    dualListboxInstance.addEventListener('removed', (e) => {
+        console.log('Removed value:', e.removedElement.dataset.id);
+    });
+    
+    return dualListboxInstance;
 }
 
 function updateDualListbox() {
@@ -157,19 +148,19 @@ function extractItemsFromDualListbox() {
     const allOptions = Array.from(selectElement.options);
     
     const selectedItemsToSave = allOptions
-        .filter(option => option.selected)
-        .map(option => ({
-            id: option.value,
-            name: option.textContent,
-            selected: true
-        }));
+    .filter(option => option.selected)
+    .map(option => ({
+        id: option.value,
+        name: option.textContent,
+        selected: true
+    }));
     
     const itemsToSave = allOptions
-        .filter(option => !option.selected)
-        .map(option => ({
-            id: option.value,
-            name: option.textContent
-        }));
+    .filter(option => !option.selected)
+    .map(option => ({
+        id: option.value,
+        name: option.textContent
+    }));
     
     return { itemsToSave, selectedItemsToSave };
 }
@@ -178,12 +169,13 @@ function extractItemsFromDualListbox() {
 async function onSaveButtonClick() {
     try {
         const { itemsToSave, selectedItemsToSave } = extractItemsFromDualListbox();
-        console.log(itemsToSave,selectedItemsToSave)
         const result = await saveItems(itemsToSave, selectedItemsToSave);
         
+        // Update global state with returned data from backend
         allItems = result.allItems;
         selectedItems = result.selectedItems;
         
+        // Update UI with fresh data from database
         updateDualListbox();
         
         alert('Items saved successfully!');

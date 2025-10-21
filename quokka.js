@@ -7,17 +7,24 @@ const allItems = [
 ];
 
 const selectedItems = [
-    { id: '1', name: 'Apple' }
+    { id: '1', name: 'Apple', selected : true}
 ];
 
+// function mergeItems(allItems, selectedItems) {
+//   return allItems.map(item => { 
+//     const selectedItem = selectedItems.find(selected => selected.id === item.id);
+//     return {
+//       ...item,
+//       selected: !!selectedItem
+//     };
+//   });
+// }
+
+// const mergedItems = mergeItems(allItems, selectedItems);
+
+
 function mergeItems(allItems, selectedItems) {
-  return allItems.map(item => { 
-    const selectedItem = selectedItems.find(selected => selected.id === item.id);
-    return {
-      ...item,
-      selected: !!selectedItem
-    };
-  });
+  return [...allItems, ...selectedItems];
 }
 
 const mergedItems = mergeItems(allItems, selectedItems); //?

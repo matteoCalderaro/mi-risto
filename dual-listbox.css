@@ -100,3 +100,23 @@
 .dual-listbox__search {
   margin-bottom: 20px;
 }
+
+/* NEW: Styles for the DISABLED state */
+.dual-listbox .dual-listbox__button:disabled {
+  /* Override the normal background color with a muted one */
+  background-color: #aebecd; /* A lighter, grayed-out color */
+  
+  /* Mute the text color */
+  color: #555;
+  
+  /* Change the cursor to indicate it's not clickable */
+  cursor: not-allowed;
+  
+  /* Remove any hover/active effects by setting them back to the disabled state */
+  opacity: 0.7; 
+}
+
+/* Also, ensure your hover state is only for *enabled* buttons */
+.dual-listbox .dual-listbox__button:hover:not(:disabled) {
+  background-color: #ccc;
+}

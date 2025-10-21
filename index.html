@@ -30,7 +30,7 @@
     
     <body>
         
-        <div class="outer-container">
+        <div class="outer-container" style="position: relative;">
             <div style="text-decoration: underline;">FUNZIONA SOLO PER LE SEGUENTI OPZIONI (chiamate attive) </div>
             <div>CCIA: Bari</div>
             <div class="mb-5">Prodotto: Olio di oliva</div>
@@ -63,13 +63,32 @@
                     </select>
                 </div>
             </div>
-
             <select class="dual-list-select d-none" multiple>
                 <!-- opzioni costruite in runtime su array risultato del merge degli array rivenienti dalle fetch -->
             </select>
+
+            <button class="btn btn-sm btn-primary save-items-button">Salva</button>
+
+            <div id="loading-overlay-bs" class="d-none" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
+            ">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
         </div>
         
-        <script src="myScript.js"></script>
+        <script type="module" src="myScript.js"></script>
         
     </body>
     
